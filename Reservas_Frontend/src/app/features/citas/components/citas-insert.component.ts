@@ -13,6 +13,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { CitaService } from '../services/cita.service';
 import { CitaCreateDto, Cita } from '../models/cita.model';
 import { finalize } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-citas-insert',
@@ -67,7 +68,7 @@ export class CitasInsertComponent {
     let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (value.length > 3) value = value.substring(0, 3) + '-' + value.substring(3, 7);
     input.value = value;
-    this.bookingForm.patchValue({ placa: value }, { emitEvent: false });
+    this.bookingForm.patchValue({ placa: value }, { emitEvent: true });
   }
 
   onBook(): void {
@@ -75,17 +76,17 @@ export class CitasInsertComponent {
 
     this.loading = true;
     const { placa, fecha, hora } = this.bookingForm.value;
-    
-    const combinedDate = new Date(fecha);
-    const [h, m] = (hora as string).split(':');
-    combinedDate.setHours(parseInt(h), parseInt(m), 0, 0);
+    const d = new Date(fecha);
+    const [hh, mm] = (hora as string).split(':');
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const localIsoString = `${year}-${month}-${day}T${hh}:${mm}:00`;
 
     const dto: CitaCreateDto = { 
       placa: (placa as string).trim(), 
-      fechaHora: combinedDate.toISOString() 
+      fechaHora: localIsoString 
     };
-
-    console.log('Enviando DTO:', dto);
 
     this.citaService.create(dto)
       .pipe(finalize(() => {
@@ -93,17 +94,21 @@ export class CitasInsertComponent {
         this.cdr.detectChanges();
       }))
       .subscribe({
-        next: (res: Cita) => {
+        next: () => {
           this.snackBar.open('¡Cita agendada con éxito!', 'Cerrar', { duration: 4000 });
-          this.citaService.notifyAppointmentCreated(placa);
+          // SE HA ELIMINADO EL NOTIFY PARA EVITAR BÚSQUEDA AUTOMÁTICA
           this.bookingForm.reset();
-          Object.keys(this.bookingForm.controls).forEach(k => this.bookingForm.get(k)?.setErrors(null));
+          Object.keys(this.bookingForm.controls).forEach(k => {
+            this.bookingForm.get(k)?.setErrors(null);
+          });
           this.cdr.detectChanges();
         },
-        error: (err: any) => {
-          console.error('Error 400:', err.error);
-          const msg = err.error?.message || 'Error en los datos enviados.';
-          this.snackBar.open(msg, 'Cerrar', { duration: 6000 });
+        error: (err: HttpErrorResponse) => {
+          const msg = err.error?.message || err.error?.Message || 'Error al agendar la cita.';
+          this.snackBar.open(msg, 'Cerrar', { 
+            duration: 6000,
+            panelClass: ['error-snackbar']
+          });
         }
       });
   }

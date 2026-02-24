@@ -61,7 +61,7 @@ public class CitasService : ICitasService
 
         if (existeCita)
         {
-            return (false, "Error: El horario ya está ocupado por otro vehículo (Validación Crítica).", null);
+            return (false, "Error: El horario seleccionado ya está ocupado. Por favor, escoja otra hora.", null);
         }
 
         var nuevaCita = new Cita

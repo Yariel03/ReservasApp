@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,7 +9,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { CitaService } from '../services/cita.service';
 import { Cita } from '../models/cita.model';
-import { finalize, Subscription } from 'rxjs';
+import { finalize } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-citas-search',
@@ -27,13 +28,12 @@ import { finalize, Subscription } from 'rxjs';
   templateUrl: './citas-search.component.html',
   styleUrl: './citas-search.component.css'
 })
-export class CitasSearchComponent implements OnInit, OnDestroy {
+export class CitasSearchComponent implements OnInit {
   searchForm: FormGroup;
   citas: Cita[] = [];
   loading: boolean = false;
   searched: boolean = false;
   currentPlaca: string = '';
-  private subscription: Subscription = new Subscription();
 
   constructor(
     private fb: FormBuilder,
@@ -47,15 +47,7 @@ export class CitasSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subscription = this.citaService.appointmentCreated$.subscribe((placa: string) => {
-      if (this.currentPlaca === placa) {
-        this.fetchData(placa);
-      }
-    });
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) this.subscription.unsubscribe();
+    // Se ha eliminado el auto-refresco tras agendar
   }
 
   onPlacaInput(event: Event): void {
@@ -99,18 +91,14 @@ export class CitasSearchComponent implements OnInit, OnDestroy {
         next: (res: Cita[]) => {
           this.citas = [...res];
           this.searched = true;
-          const ctrl = this.searchForm.get('placa');
-          ctrl?.setValue('');
-          ctrl?.setErrors(null);
-          ctrl?.markAsPristine();
-          ctrl?.markAsUntouched();
+          // EL INPUT YA NO SE BORRA AQUÍ
           this.cdr.detectChanges();
         },
-        error: (err: any) => {
+        error: (err: HttpErrorResponse) => {
           this.citas = [];
           this.searched = true;
-          this.snackBar.open('No se encontraron registros.', 'Cerrar', { duration: 4000 });
-          this.searchForm.get('placa')?.setValue('');
+          const msg = err.error?.message || err.error?.Message || 'No se encontraron registros.';
+          this.snackBar.open(msg, 'Cerrar', { duration: 4000 });
           this.cdr.detectChanges();
         }
       });
