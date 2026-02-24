@@ -1,0 +1,27 @@
+# .NET
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.sln.doccache
+.vs/
+
+# Angular
+node_modules/
+/dist
+/tmp
+/out-tsc
+/.angular
+npm-debug.log
+yarn-error.log
+.history/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db

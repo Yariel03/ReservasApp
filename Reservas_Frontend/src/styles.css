@@ -1,0 +1,19 @@
+/* Importación del Tema Global de Angular Material */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+html, body { 
+  height: 100%; 
+  margin: 0; 
+}
+
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+  background-color: #f4f7f6; /* Un gris muy claro para que las tarjetas blancas resalten */
+}
+
+/* Forzar que el fondo del calendario sea sólido */
+.mat-datepicker-content {
+  background-color: white !important;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
+}

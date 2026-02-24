@@ -1,0 +1,51 @@
+<mat-card class="feature-card">
+  <div class="loading-overlay" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <mat-card-header>
+    <mat-card-title>Nueva Cita</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="business-rules-label">
+      <strong>Reglas de Agendamiento:</strong>
+      <ul>
+        <li>Atención de Lunes a Viernes.</li>
+        <li>Horario: 08:00 AM a 02:00 PM.</li>
+        <li>Citas en intervalos de 30 minutos.</li>
+      </ul>
+    </div>
+
+    <form [formGroup]="bookingForm" (ngSubmit)="onBook()" class="vertical-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Placa del Vehículo</mat-label>
+        <input matInput formControlName="placa" placeholder="PDF-1234" maxlength="8" (input)="onPlacaInput($event)">
+        <mat-error *ngIf="bookingForm.get('placa')?.invalid">Placa requerida</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Seleccionar Fecha</mat-label>
+        <input matInput [matDatepicker]="picker" [matDatepickerFilter]="dateFilter" [min]="minDate" formControlName="fecha" readonly>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="bookingForm.get('fecha')?.invalid">Seleccione una fecha</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Seleccionar Hora</mat-label>
+        <mat-select formControlName="hora">
+          @for (h of availableHours; track h) {
+            <mat-option [value]="h">{{h}}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Bloques de 30 min</mat-hint>
+        <mat-error *ngIf="bookingForm.get('hora')?.invalid">Hora obligatoria</mat-error>
+      </mat-form-field>
+
+      <button mat-raised-button color="accent" type="submit" class="action-button booking-btn" [disabled]="bookingForm.invalid || loading">
+        CONFIRMAR CITA
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>
