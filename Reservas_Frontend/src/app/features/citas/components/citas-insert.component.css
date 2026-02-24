@@ -1,0 +1,68 @@
+.feature-card {
+  border-radius: 16px !important;
+  border: 1px solid #ddd;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05) !important;
+  margin-bottom: 2rem;
+}
+
+mat-card-header {
+  margin-bottom: 1.5rem;
+}
+
+mat-card-title {
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  color: #2c3e50;
+}
+
+.vertical-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Espacio entre inputs */
+  margin-top: 1rem;
+}
+
+.business-rules-label {
+  background-color: #e8eaf6;
+  border-left: 4px solid #3f51b5;
+  padding: 1.2rem;
+  margin-bottom: 2rem; /* Separar del formulario */
+  border-radius: 8px;
+}
+
+.business-rules-label strong {
+  color: #1a237e;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.business-rules-label ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.action-button {
+  height: 56px !important;
+  margin-top: 1.5rem !important; /* Separar del último input */
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.booking-btn {
+  background-color: #ff5722 !important;
+  color: white !important;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 16px;
+}

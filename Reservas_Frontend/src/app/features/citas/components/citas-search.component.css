@@ -1,0 +1,93 @@
+.feature-card {
+  border-radius: 16px !important;
+  border: 1px solid #ddd;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05) !important;
+}
+
+mat-card-header {
+  margin-bottom: 1.5rem;
+}
+
+mat-card-title {
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  color: #2c3e50;
+}
+
+.vertical-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.action-button {
+  height: 56px !important;
+  margin-top: 1rem !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+}
+
+.results-container {
+  margin-top: 2.5rem;
+}
+
+.results-title {
+  font-size: 1.1rem;
+  color: #3f51b5;
+  margin-bottom: 1.2rem;
+  font-weight: 600;
+}
+
+.appointments-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.appointment-item {
+  background: white;
+  padding: 1.2rem;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 5px solid #3f51b5;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.item-placa {
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: #1a237e;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.item-date {
+  font-weight: 500;
+  color: #555;
+  text-align: right;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: #fdfdfd;
+  border: 2px dashed #eee;
+  border-radius: 16px;
+  color: #999;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 16px;
+}

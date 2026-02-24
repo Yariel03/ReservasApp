@@ -4,11 +4,11 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
-import { CitaService } from '../../services/cita.service';
-import { Cita } from '../../models/cita.model';
+import { CitaService } from '../services/cita.service';
+import { Cita } from '../models/cita.model';
 import { finalize, Subscription } from 'rxjs';
 
 @Component({
@@ -20,6 +20,7 @@ import { finalize, Subscription } from 'rxjs';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatSnackBarModule,
     MatProgressSpinnerModule,
     MatCardModule
   ],
@@ -45,8 +46,7 @@ export class CitasSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Escuchar si se crea una cita para refrescar la lista
-    this.subscription = this.citaService.appointmentCreated$.subscribe(placa => {
+    this.subscription = this.citaService.appointmentCreated$.subscribe((placa: string) => {
       if (this.searchForm.get('placa')?.value === placa) {
         this.onSearch();
       }
@@ -54,10 +54,12 @@ export class CitasSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
-  onPlacaInput(event: any): void {
+  onPlacaInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (value.length > 3) value = value.substring(0, 3) + '-' + value.substring(3, 7);
@@ -68,7 +70,7 @@ export class CitasSearchComponent implements OnInit, OnDestroy {
   onSearch(): void {
     if (this.searchForm.invalid) return;
 
-    const placa = this.searchForm.get('placa')?.value;
+    const placa: string = this.searchForm.get('placa')?.value;
     this.loading = true;
     
     this.citaService.getByPlaca(placa)
@@ -77,12 +79,12 @@ export class CitasSearchComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       }))
       .subscribe({
-        next: (res) => {
+        next: (res: Cita[]) => {
           this.citas = [...res];
           this.searched = true;
           this.cdr.detectChanges();
         },
-        error: (err) => {
+        error: (err: any) => {
           this.citas = [];
           this.searched = true;
           this.snackBar.open(err.error?.message || 'Sin registros.', 'Cerrar', { duration: 4000 });

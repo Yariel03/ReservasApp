@@ -56,6 +56,11 @@ npm start
 ```
 - Web URL: http://localhost:4200
 
+## Demostración de Funcionamiento
+Puede encontrar los videos con el recorrido funcional del sistema y la explicación técnica en el siguiente enlace:
+
+[Carpeta de Google Drive - Videos Demo](https://drive.google.com/drive/folders/1H4J7FYlkxjubY37O1cv2UwV1fPL5Qt6g?usp=sharing)
+
 ---
 
 ## Características y Reglas de Negocio (Implementadas al 100%)

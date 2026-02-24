@@ -6,12 +6,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CitaService } from '../services/cita.service';
-import { CitaCreateDto } from '../models/cita.model';
+import { CitaCreateDto, Cita } from '../models/cita.model';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -26,6 +26,7 @@ import { finalize } from 'rxjs';
     MatNativeDateModule,
     MatSelectModule,
     MatButtonModule,
+    MatSnackBarModule,
     MatProgressSpinnerModule,
     MatCardModule
   ],
@@ -61,7 +62,7 @@ export class CitasInsertComponent {
     });
   }
 
-  onPlacaInput(event: any): void {
+  onPlacaInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (value.length > 3) value = value.substring(0, 3) + '-' + value.substring(3, 7);
@@ -78,7 +79,10 @@ export class CitasInsertComponent {
     const [h, m] = (hora as string).split(':');
     combinedDate.setHours(parseInt(h), parseInt(m), 0);
 
-    const dto: CitaCreateDto = { placa, fechaHora: combinedDate.toISOString() };
+    const dto: CitaCreateDto = { 
+      placa: placa as string, 
+      fechaHora: combinedDate.toISOString() 
+    };
 
     this.citaService.create(dto)
       .pipe(finalize(() => {
@@ -86,13 +90,16 @@ export class CitasInsertComponent {
         this.cdr.detectChanges();
       }))
       .subscribe({
-        next: () => {
+        next: (res: Cita) => {
           this.snackBar.open('Cita agendada con éxito.', 'Cerrar', { duration: 4000 });
           this.citaService.notifyAppointmentCreated(placa);
           this.bookingForm.reset();
-          Object.keys(this.bookingForm.controls).forEach(k => this.bookingForm.get(k)?.setErrors(null));
+          Object.keys(this.bookingForm.controls).forEach(k => {
+            this.bookingForm.get(k)?.setErrors(null);
+          });
+          this.cdr.detectChanges();
         },
-        error: (err) => {
+        error: (err: any) => {
           this.snackBar.open(err.error?.message || 'Error al agendar.', 'Cerrar', { duration: 6000 });
         }
       });
