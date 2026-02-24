@@ -32,6 +32,7 @@ export class CitasSearchComponent implements OnInit, OnDestroy {
   citas: Cita[] = [];
   loading: boolean = false;
   searched: boolean = false;
+  currentPlaca: string = '';
   private subscription: Subscription = new Subscription();
 
   constructor(
@@ -47,16 +48,14 @@ export class CitasSearchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscription = this.citaService.appointmentCreated$.subscribe((placa: string) => {
-      if (this.searchForm.get('placa')?.value === placa) {
-        this.onSearch();
+      if (this.currentPlaca === placa) {
+        this.fetchData(placa);
       }
     });
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    if (this.subscription) this.subscription.unsubscribe();
   }
 
   onPlacaInput(event: Event): void {
@@ -69,9 +68,27 @@ export class CitasSearchComponent implements OnInit, OnDestroy {
 
   onSearch(): void {
     if (this.searchForm.invalid) return;
-
     const placa: string = this.searchForm.get('placa')?.value;
+    this.fetchData(placa);
+  }
+
+  onClear(): void {
+    this.searchForm.reset();
+    this.citas = [];
+    this.searched = false;
+    this.currentPlaca = '';
+    Object.keys(this.searchForm.controls).forEach(key => {
+      const ctrl = this.searchForm.get(key);
+      ctrl?.setErrors(null);
+      ctrl?.markAsPristine();
+      ctrl?.markAsUntouched();
+    });
+    this.cdr.detectChanges();
+  }
+
+  private fetchData(placa: string): void {
     this.loading = true;
+    this.currentPlaca = placa;
     
     this.citaService.getByPlaca(placa)
       .pipe(finalize(() => {
@@ -82,12 +99,17 @@ export class CitasSearchComponent implements OnInit, OnDestroy {
         next: (res: Cita[]) => {
           this.citas = [...res];
           this.searched = true;
+          this.searchForm.get('placa')?.setValue('');
+          this.searchForm.get('placa')?.setErrors(null);
+          this.searchForm.get('placa')?.markAsPristine();
+          this.searchForm.get('placa')?.markAsUntouched();
           this.cdr.detectChanges();
         },
         error: (err: any) => {
           this.citas = [];
           this.searched = true;
-          this.snackBar.open(err.error?.message || 'Sin registros.', 'Cerrar', { duration: 4000 });
+          this.snackBar.open('No se encontraron registros.', 'Cerrar', { duration: 4000 });
+          this.searchForm.get('placa')?.setValue('');
           this.cdr.detectChanges();
         }
       });

@@ -2,6 +2,7 @@
   border-radius: 16px !important;
   border: 1px solid #ddd;
   box-shadow: 0 8px 20px rgba(0,0,0,0.05) !important;
+  position: relative;
 }
 
 mat-card-header {
@@ -21,11 +22,27 @@ mat-card-title {
   margin-top: 1rem;
 }
 
+.button-group {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 500px) {
+  .button-group {
+    grid-template-columns: 1fr;
+  }
+}
+
 .action-button {
   height: 56px !important;
-  margin-top: 1rem !important;
   font-weight: 700 !important;
   border-radius: 12px !important;
+}
+
+.search-btn {
+  box-shadow: 0 4px 12px rgba(63, 81, 181, 0.2) !important;
 }
 
 .results-container {
@@ -37,6 +54,8 @@ mat-card-title {
   color: #3f51b5;
   margin-bottom: 1.2rem;
   font-weight: 600;
+  border-left: 4px solid #3f51b5;
+  padding-left: 10px;
 }
 
 .appointments-list {

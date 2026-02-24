@@ -28,22 +28,27 @@ public class CitasService : ICitasService
 
     public async Task<(bool Success, string Message, CitaResponseDto? Data)> CreateAsync(CitaCreateDto dto)
     {
-        if (dto.FechaHora.Date < DateTime.Today)
+        // Limpiar segundos y milisegundos para evitar errores de precisión
+        var fechaLimpia = new DateTime(dto.FechaHora.Year, dto.FechaHora.Month, dto.FechaHora.Day, 
+                                     dto.FechaHora.Hour, dto.FechaHora.Minute, 0, 0);
+
+        if (fechaLimpia.Date < DateTime.Today)
         {
             return (false, "Error: No se pueden agendar citas para fechas pasadas.", null);
         }
 
-        if (dto.FechaHora.DayOfWeek == DayOfWeek.Saturday || dto.FechaHora.DayOfWeek == DayOfWeek.Sunday)
+        if (fechaLimpia.DayOfWeek == DayOfWeek.Saturday || fechaLimpia.DayOfWeek == DayOfWeek.Sunday)
         {
             return (false, "Error: Solo se permiten citas de Lunes a Viernes (Regla de Negocio 1).", null);
         }
 
-        var hora = dto.FechaHora.Hour;
-        var minutos = dto.FechaHora.Minute;
+        var hora = fechaLimpia.Hour;
+        var minutos = fechaLimpia.Minute;
 
-        if (hora < 8 || (hora >= 14 && minutos > 0))
+        // Horario permitido: 08:00 a 14:00 (inclusive 14:00 si es el último slot)
+        if (hora < 8 || hora > 14 || (hora == 14 && minutos > 0))
         {
-            return (false, "Error: El horario de atención es estrictamente de 08:00 AM a 14:00 PM (Regla de Negocio 1).", null);
+            return (false, "Error: El horario de atención es estrictamente de 08:00 AM a 02:00 PM (Regla de Negocio 1).", null);
         }
 
         if (minutos != 0 && minutos != 30)
@@ -52,7 +57,7 @@ public class CitasService : ICitasService
         }
 
         var existeCita = await _context.Citas
-            .AnyAsync(c => c.FechaHora == dto.FechaHora);
+            .AnyAsync(c => c.FechaHora == fechaLimpia);
 
         if (existeCita)
         {
@@ -62,7 +67,7 @@ public class CitasService : ICitasService
         var nuevaCita = new Cita
         {
             Placa = dto.Placa.ToUpper(),
-            FechaHora = dto.FechaHora
+            FechaHora = fechaLimpia
         };
 
         _context.Citas.Add(nuevaCita);

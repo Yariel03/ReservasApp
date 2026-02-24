@@ -75,14 +75,17 @@ export class CitasInsertComponent {
 
     this.loading = true;
     const { placa, fecha, hora } = this.bookingForm.value;
+    
     const combinedDate = new Date(fecha);
     const [h, m] = (hora as string).split(':');
-    combinedDate.setHours(parseInt(h), parseInt(m), 0);
+    combinedDate.setHours(parseInt(h), parseInt(m), 0, 0);
 
     const dto: CitaCreateDto = { 
-      placa: placa as string, 
+      placa: (placa as string).trim(), 
       fechaHora: combinedDate.toISOString() 
     };
+
+    console.log('Enviando DTO:', dto);
 
     this.citaService.create(dto)
       .pipe(finalize(() => {
@@ -91,16 +94,16 @@ export class CitasInsertComponent {
       }))
       .subscribe({
         next: (res: Cita) => {
-          this.snackBar.open('Cita agendada con éxito.', 'Cerrar', { duration: 4000 });
+          this.snackBar.open('¡Cita agendada con éxito!', 'Cerrar', { duration: 4000 });
           this.citaService.notifyAppointmentCreated(placa);
           this.bookingForm.reset();
-          Object.keys(this.bookingForm.controls).forEach(k => {
-            this.bookingForm.get(k)?.setErrors(null);
-          });
+          Object.keys(this.bookingForm.controls).forEach(k => this.bookingForm.get(k)?.setErrors(null));
           this.cdr.detectChanges();
         },
         error: (err: any) => {
-          this.snackBar.open(err.error?.message || 'Error al agendar.', 'Cerrar', { duration: 6000 });
+          console.error('Error 400:', err.error);
+          const msg = err.error?.message || 'Error en los datos enviados.';
+          this.snackBar.open(msg, 'Cerrar', { duration: 6000 });
         }
       });
   }

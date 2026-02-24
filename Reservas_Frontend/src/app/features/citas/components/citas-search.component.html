@@ -16,13 +16,18 @@
         <mat-error *ngIf="searchForm.get('placa')?.invalid">Placa inválida</mat-error>
       </mat-form-field>
       
-      <button mat-raised-button color="primary" type="submit" class="action-button" [disabled]="searchForm.invalid || loading">
-        BUSCAR CITAS
-      </button>
+      <div class="button-group">
+        <button mat-raised-button color="primary" type="submit" class="action-button search-btn" [disabled]="searchForm.invalid || loading">
+          BUSCAR CITAS
+        </button>
+        <button mat-stroked-button color="warn" type="button" class="action-button clear-btn" (click)="onClear()" [disabled]="loading">
+          LIMPIAR
+        </button>
+      </div>
     </form>
 
     <div class="results-container" *ngIf="searched">
-      <h3 class="results-title" *ngIf="citas.length > 0">Citas encontradas para: {{searchForm.get('placa')?.value}}</h3>
+      <h3 class="results-title" *ngIf="citas.length > 0">Citas encontradas para: {{currentPlaca}}</h3>
       
       <ul class="appointments-list" *ngIf="citas.length > 0">
         @for (cita of citas; track cita.id) {
