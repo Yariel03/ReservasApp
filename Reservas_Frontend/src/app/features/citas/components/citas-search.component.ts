@@ -99,10 +99,11 @@ export class CitasSearchComponent implements OnInit, OnDestroy {
         next: (res: Cita[]) => {
           this.citas = [...res];
           this.searched = true;
-          this.searchForm.get('placa')?.setValue('');
-          this.searchForm.get('placa')?.setErrors(null);
-          this.searchForm.get('placa')?.markAsPristine();
-          this.searchForm.get('placa')?.markAsUntouched();
+          const ctrl = this.searchForm.get('placa');
+          ctrl?.setValue('');
+          ctrl?.setErrors(null);
+          ctrl?.markAsPristine();
+          ctrl?.markAsUntouched();
           this.cdr.detectChanges();
         },
         error: (err: any) => {

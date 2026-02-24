@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
 import { CitasSearchComponent } from '../components/citas-search.component';
 import { CitasInsertComponent } from '../components/citas-insert.component';
 
@@ -11,13 +10,11 @@ import { CitasInsertComponent } from '../components/citas-insert.component';
   imports: [
     CommonModule,
     MatToolbarModule,
-    MatIconModule,
     CitasSearchComponent,
     CitasInsertComponent
   ],
   template: `
     <mat-toolbar color="primary" class="main-toolbar">
-      <mat-icon>commute</mat-icon>
       <span class="title">ReservasApp - Mantenimiento Vehicular</span>
     </mat-toolbar>
 
